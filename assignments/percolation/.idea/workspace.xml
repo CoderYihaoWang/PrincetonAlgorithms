@@ -54,10 +54,11 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.PercolationStats">
+  <component name="RunManager" selected="Application.InteractivePercolationVisualizer">
     <configuration name="InteractivePercolationVisualizer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="InteractivePercolationVisualizer" />
       <module name="Algorithms, Part I" />
+      <option name="PROGRAM_PARAMETERS" value="10" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -71,7 +72,7 @@
     <configuration name="PercolationVisualizer" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="PercolationVisualizer" />
       <module name="Algorithms, Part I" />
-      <option name="PROGRAM_PARAMETERS" value="snake101.txt" />
+      <option name="PROGRAM_PARAMETERS" value="snake13.txt" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">

@@ -7,11 +7,11 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private final WeightedQuickUnionUF wqu;
-    private final boolean[][] visited;
+    private final boolean[][] opened;
+    private final boolean[] bottom;
     private final int n;
-    private final int head;
-    private final int tail;
-    private int numberOfOpenSites;
+    private int numberOfOpenSites = 0;
+    private boolean percolates = false;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
@@ -19,10 +19,10 @@ public class Percolation {
             throw new IllegalArgumentException("The side length" + n + " is not larger than 1");
         wqu = new WeightedQuickUnionUF((n + 1) * (n + 1));
         this.n = n;
-        head = 0;
-        tail = n * (n + 1);
-        numberOfOpenSites = 0;
-        visited = new boolean[n + 1][n + 1];
+        opened = new boolean[n + 1][n + 1];
+        bottom = new boolean[(n + 1) * (n + 1)];
+        for (int i = (n + 1) * n; i < bottom.length; ++i)
+            bottom[i] = true;
     }
 
     private void validate(int row, int col) {
@@ -41,35 +41,69 @@ public class Percolation {
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
         validate(row, col);
-        if (visited[row][col])
+        if (opened[row][col])
             return;
+        opened[row][col] = true;
         int index = xyTo1D(row, col);
-        if (col > 1 && isOpen(row, col - 1))
-            wqu.union(index, index - 1);
-        if (col < n && isOpen(row, col + 1))
-            wqu.union(index, index + 1);
-        if (row > 1 && isOpen(row - 1, col))
-            wqu.union(index, index - n - 1);
-        if (row < n && isOpen(row + 1, col))
-            wqu.union(index, index + n + 1);
-        if (row == 1)
-            wqu.union(index, head);
-        if (row == n)
-            wqu.union(index, tail);
+        int up = -1;
+        int down = -1;
+        int left = -1;
+        int right = -1;
+        if (col > 1 && opened[row][col - 1]) {
+            int other = xyTo1D(row, col - 1);
+            left = wqu.find(other);
+            wqu.union(index, other);
+        }
+        if (col < n && opened[row][col + 1]) {
+            int other = xyTo1D(row, col + 1);
+            right = wqu.find(other);
+            wqu.union(index, other);
+        }
+        if (row < n && opened[row + 1][col]) {
+            int other = xyTo1D(row + 1, col);
+            down = wqu.find(other);
+            wqu.union(index, other);
+        }
+        if (row > 1 && opened[row - 1][col]) {
+            int other = xyTo1D(row - 1, col);
+            up = wqu.find(other);
+            wqu.union(index, other);
+        }
+        if (row == 1) {
+            up = wqu.find(0);
+            wqu.union(index, 0);
+        }
+        if ((left >= 0 && bottom[left])
+                || (right >= 0 && bottom[right])
+                || (up >= 0 && bottom[up])
+                || (down >= 0 && bottom[down])
+                || row == n) {
+            if (left >= 0)
+                bottom[left] = false;
+            if (right >= 0)
+                bottom[right] = false;
+            if (up >= 0)
+                bottom[up] = false;
+            if (down >= 0)
+                bottom[down] = false;
+            int root = wqu.find(index);
+            if (root == wqu.find(0))
+                percolates = true;
+            bottom[root] = true;
+        }
         ++numberOfOpenSites;
-        visited[row][col] = true;
     }
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col) {
         validate(row, col);
-        return visited[row][col];
+        return opened[row][col];
     }
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         validate(row, col);
-        return wqu.find(xyTo1D(row, col)) == wqu.find(head);
+        return wqu.find(xyTo1D(row, col)) == wqu.find(0);
     }
 
     // returns the number of open sites
@@ -79,6 +113,6 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return wqu.find(tail) == wqu.find(head);
+        return percolates;
     }
 }
