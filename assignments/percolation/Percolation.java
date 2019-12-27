@@ -12,6 +12,7 @@ public class Percolation {
     private final int n;
     private int numberOfOpenSites = 0;
     private boolean percolates = false;
+    private int root = 0;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
@@ -73,6 +74,10 @@ public class Percolation {
             up = wqu.find(0);
             wqu.union(index, 0);
         }
+        root = wqu.find(0);
+        ++numberOfOpenSites;
+        if (percolates)
+            return;
         if ((left >= 0 && bottom[left])
                 || (right >= 0 && bottom[right])
                 || (up >= 0 && bottom[up])
@@ -86,12 +91,11 @@ public class Percolation {
                 bottom[up] = false;
             if (down >= 0)
                 bottom[down] = false;
-            int root = wqu.find(index);
-            if (root == wqu.find(0))
+            int curRoot = wqu.find(index);
+            if (curRoot == root)
                 percolates = true;
-            bottom[root] = true;
+            bottom[curRoot] = true;
         }
-        ++numberOfOpenSites;
     }
 
     // is the site (row, col) open?
@@ -103,7 +107,7 @@ public class Percolation {
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         validate(row, col);
-        return wqu.find(xyTo1D(row, col)) == wqu.find(0);
+        return wqu.find(xyTo1D(row, col)) == root;
     }
 
     // returns the number of open sites
