@@ -61,6 +61,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (size <= capacity / 4)
             resize(capacity / 2);
         Item item = items[head];
+        items[head] = null;
         head = (head + 1) % capacity;
         --size;
         return item;
