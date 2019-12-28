@@ -2,55 +2,42 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.ArrayList;
+
 public class BruteCollinearPoints {
-    private final SegmentList segmentList = new SegmentList();
-
-    private class SegmentList {
-        private class SegmentNode {
-            private final LineSegment value;
-            private SegmentNode next;
-
-            public SegmentNode(LineSegment value, SegmentNode next) {
-                this.value = value;
-                this.next = next;
-            }
-        }
-
-        private SegmentNode head = null;
-        private int size = 0;
-
-        public void add(LineSegment seg) {
-            head = new SegmentNode(seg, head);
-            ++size;
-        }
-
-        public int size() {
-            return size;
-        }
-
-        public LineSegment[] toArray() {
-            LineSegment[] res = new LineSegment[size];
-            SegmentNode current = head;
-            for (int i = 0; i < size; ++i) {
-                res[i] = current.value;
-                current = current.next;
-            }
-            return res;
-        }
-    }
+    private final ArrayList<LineSegment> segmentList = new ArrayList<>();
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
         if (points == null)
             throw new IllegalArgumentException("The points array cannot be null");
 
-        if (points.length < 4)
-            return;
+        int len = points.length;
 
-        if (points[0] == null || points[1] == null || points[2] == null)
+        if ((len > 0 && points[0] == null)
+                || (len > 1 && points[1] == null)
+                || (len > 2 && points[2] == null))
             throw new IllegalArgumentException("The point in the points array cannot be null");
 
-        int len = points.length;
+        if (len == 2 && points[0].compareTo(points[1]) == 0)
+            throw new IllegalArgumentException(
+                    "There are repeated points in the input: " + points[0]
+                            .toString());
+
+        if (len == 3) {
+            if (points[0].compareTo(points[1]) == 0 || points[0].compareTo(points[2]) == 0)
+                throw new IllegalArgumentException(
+                        "There are repeated points in the input: " + points[0]
+                                .toString());
+            if (points[1].compareTo(points[2]) == 0)
+                throw new IllegalArgumentException(
+                        "There are repeated points in the input: " + points[1]
+                                .toString());
+        }
+
+        if (len < 4)
+            return;
+
         for (int i = 0; i < len; ++i) {
             for (int j = i + 1; j < len; ++j) {
                 for (int k = j + 1; k < len; ++k) {
@@ -66,7 +53,7 @@ public class BruteCollinearPoints {
                             throw new IllegalArgumentException(
                                     "There are repeated points in the input: " + points[i]
                                             .toString());
-                        if (k1 == k2 && k2 == k3) {
+                        if (Double.compare(k1, k2) == 0 && Double.compare(k2, k3) == 0) {
                             Point min = points[i];
                             Point max = points[i];
                             if (min.compareTo(points[j]) > 0)
@@ -87,6 +74,16 @@ public class BruteCollinearPoints {
                 }
             }
         }
+        if (points[len - 1].compareTo(points[len - 2]) == 0
+                || points[len - 1].compareTo(points[len - 3]) == 0)
+            throw new IllegalArgumentException(
+                    "There are repeated points in the input: " + points[len - 1]
+                            .toString());
+        if (points[len - 2].compareTo(points[len - 3]) == 0)
+            throw new IllegalArgumentException(
+                    "There are repeated points in the input: " + points[len - 2]
+                            .toString());
+
     }
 
     // the number of line segments
@@ -96,7 +93,8 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        return segmentList.toArray();
+        LineSegment[] res = new LineSegment[segmentList.size()];
+        return segmentList.toArray(res);
     }
 
     public static void main(String[] args) {

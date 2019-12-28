@@ -61,7 +61,7 @@
     <configuration name="FastCollinearPoints" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="FastCollinearPoints" />
       <module name="Algorithms, Part I" />
-      <option name="PROGRAM_PARAMETERS" value="input400.txt" />
+      <option name="PROGRAM_PARAMETERS" value="input20.txt" />
       <method v="2" />
     </configuration>
     <configuration name="Point" type="Application" factoryName="Application">

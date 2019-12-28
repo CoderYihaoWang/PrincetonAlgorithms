@@ -2,79 +2,69 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class FastCollinearPoints {
-    private final SegmentList segmentList = new SegmentList();
-
-    private class SegmentList {
-        private class SegmentNode {
-            private final LineSegment value;
-            private SegmentNode next;
-
-            public SegmentNode(LineSegment value, SegmentNode next) {
-                this.value = value;
-                this.next = next;
-            }
-        }
-
-        private SegmentNode head = null;
-        private int size = 0;
-
-        public void add(LineSegment seg) {
-            head = new SegmentNode(seg, head);
-            ++size;
-        }
-
-        public int size() {
-            return size;
-        }
-
-        public LineSegment[] toArray() {
-            LineSegment[] res = new LineSegment[size];
-            SegmentNode current = head;
-            for (int i = 0; i < size; ++i) {
-                res[i] = current.value;
-                current = current.next;
-            }
-            return res;
-        }
-    }
+    private final ArrayList<LineSegment> segmentList = new ArrayList<>();
 
     // finds all line segments containing 4 points
     public FastCollinearPoints(Point[] points) {
         if (points == null)
             throw new IllegalArgumentException("The points array cannot be null");
 
-        if (points.length < 4)
-            return;
-
-        for (Point p : points)
-            if (p == null)
-                throw new IllegalArgumentException("The point in points array cannot be null");
-
-        Arrays.sort(points);
         int len = points.length;
-        Point current = points[0];
-        for (int i = 1; i < len; ++i) {
-            if (current.compareTo(points[i]) == 0)
-                throw new IllegalArgumentException(
-                        "There are repeated points in the input: " + current.toString());
-            current = points[i];
+        Point[] pointsCopy = new Point[len];
+
+        for (int i = 0; i < len; ++i) {
+            if (points[i] == null)
+                throw new IllegalArgumentException("The point in points array cannot be null");
+            pointsCopy[i] = points[i];
         }
 
-        for (int i = 0; i < len - 3; ++i) {
-            Arrays.sort(points, i + 1, len, points[i].slopeOrder());
-            for (int j = i + 1; j < len - 2; ++j) {
-                double k1 = points[i].slopeTo(points[j]);
-                double k2 = points[i].slopeTo(points[j + 1]);
-                if (k1 != k2)
-                    continue;
-                double k3 = points[i].slopeTo(points[j + 2]);
-                if (k2 == k3)
-                    segmentList.add(new LineSegment(points[i], points[j + 2]));
+        Arrays.sort(pointsCopy);
+
+        Point current = pointsCopy[0];
+        for (int i = 1; i < len; ++i) {
+            if (current.compareTo(pointsCopy[i]) == 0)
+                throw new IllegalArgumentException(
+                        "There are repeated points in the input: " + current.toString());
+            current = pointsCopy[i];
+        }
+
+        if (len < 4)
+            return;
+
+        for (int i = 0; i < len; ++i) {
+            current = points[i];
+            Arrays.sort(pointsCopy, current.slopeOrder());
+            int end;
+            for (int start = 0; start < len - 2; start = end) {
+                int count = 2;
+                double currentSlope = current.slopeTo(pointsCopy[start]);
+                for (end = start + 1;
+                     end < len
+                             && Double.compare(current.slopeTo(pointsCopy[end]), currentSlope)
+                             == 0;
+                     ++end)
+                    ++count;
+                if (count >= 4) {
+                    Point[] line = new Point[count];
+                    line[0] = current;
+                    for (int j = start; j < end; ++j)
+                        line[j - start + 1] = pointsCopy[j];
+                    Point min = line[0];
+                    Point max = line[0];
+                    for (int j = 1; j < count; ++j) {
+                        if (min.compareTo(line[j]) > 0)
+                            min = line[j];
+                        if (max.compareTo(line[j]) < 0)
+                            max = line[j];
+                    }
+                    if (line[0].equals(min))
+                        segmentList.add(new LineSegment(min, max));
+                }
             }
-            Arrays.sort(points, i + 1, len);
         }
     }
 
@@ -85,7 +75,8 @@ public class FastCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        return segmentList.toArray();
+        LineSegment[] res = new LineSegment[segmentList.size()];
+        return segmentList.toArray(res);
     }
 
     public static void main(String[] args) {
