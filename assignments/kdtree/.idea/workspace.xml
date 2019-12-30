@@ -51,11 +51,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.KdTree">
+    <configuration name="KdTree" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="KdTree" />
+      <module name="Algorithms, Part I" />
+      <option name="PROGRAM_PARAMETERS" value="input20K.txt" />
+      <method v="2" />
+    </configuration>
+    <configuration name="KdTreeVisualizer" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="KdTreeVisualizer" />
+      <module name="Algorithms, Part I" />
+      <method v="2" />
+    </configuration>
     <configuration name="PointSET" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="PointSET" />
       <module name="Algorithms, Part I" />
       <option name="PROGRAM_PARAMETERS" value="circle10000.txt" />
+      <method v="2" />
+    </configuration>
+    <configuration name="RangeSearchVisualizer" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="RangeSearchVisualizer" />
+      <module name="Algorithms, Part I" />
+      <option name="PROGRAM_PARAMETERS" value="input10K.txt" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
