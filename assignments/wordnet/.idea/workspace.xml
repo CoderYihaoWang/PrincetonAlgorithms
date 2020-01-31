@@ -51,11 +51,23 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Outcast">
+    <configuration name="Outcast" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Outcast" />
+      <module name="Algorithms, Part II" />
+      <option name="PROGRAM_PARAMETERS" value="synsets.txt hypernyms.txt outcast5.txt outcast8.txt outcast11.txt" />
+      <method v="2" />
+    </configuration>
     <configuration name="SAP" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SAP" />
       <module name="Algorithms, Part II" />
-      <option name="PROGRAM_PARAMETERS" value="&quot;digraph-wordnet.txt&quot;" />
+      <option name="PROGRAM_PARAMETERS" value="digraph1.txt" />
+      <method v="2" />
+    </configuration>
+    <configuration name="WordNet" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="WordNet" />
+      <module name="Algorithms, Part II" />
+      <option name="PROGRAM_PARAMETERS" value="synsets.txt hypernyms.txt" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">

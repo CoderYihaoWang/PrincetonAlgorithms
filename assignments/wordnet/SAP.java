@@ -17,8 +17,8 @@ public class SAP {
     private static final int CACHESIZE = 10;
 
     private final Digraph G;
-    private int[] vDistTo;
-    private int[] wDistTo;
+    private final int[] vDistTo;
+    private final int[] wDistTo;
     private int length;
     private int ancestor;
 
@@ -75,6 +75,7 @@ public class SAP {
 
         if (checkCache(v, w))
             return;
+
         Queue<Integer> qv = new Queue<>();
         Queue<Integer> qw = new Queue<>();
         SET<Integer> vMarked = new SET<>();
