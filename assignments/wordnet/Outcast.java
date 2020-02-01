@@ -1,7 +1,7 @@
 /* *****************************************************************************
- *  Name:
- *  Date:
- *  Description:
+ *  Name: Outcast.java
+ *  Date: 1/2/2020
+ *  Description: computes the outcast from a group of words
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.In;
@@ -32,8 +32,10 @@ public class Outcast {
             int distance = 0;
             for (int j = 0; j < len; ++j)
                 distance += distances[i][j];
-            if (distance > maxDistance)
+            if (distance > maxDistance) {
                 maxId = i;
+                maxDistance = distance;
+            }
         }
         return nouns[maxId];
     }

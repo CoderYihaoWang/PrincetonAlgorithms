@@ -1,18 +1,23 @@
 /* *****************************************************************************
- *  Name:
- *  Date:
- *  Description:
+ *  Name: WordNet.java
+ *  Date: 1/2/2020
+ *  Description: compute distances and shortest ancestor paths in a WordNet graph
  **************************************************************************** */
 
+import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.ST;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 public class WordNet {
 
-    private final ST<String, Integer> nouns = new ST<>();
+    private final ST<String, Bag<Integer>> nouns = new ST<>();
     private final ST<Integer, String> syns = new ST<>();
     private final SAP sap;
 
@@ -22,27 +27,49 @@ public class WordNet {
             throw new IllegalArgumentException("The filenames cannot be null");
 
         In synsetsIn = new In(synsets);
-        int maxId = -1;
         while (synsetsIn.hasNextLine()) {
             String[] line = synsetsIn.readLine().split(",");
             int id = Integer.parseInt(line[0]);
-            if (id > maxId)
-                maxId = id;
             String synset = line[1];
             syns.put(id, synset);
-            for (String noun : synset.split(" "))
-                nouns.put(noun, id);
+            for (String noun : synset.split(" ")) {
+                if (!nouns.contains(noun))
+                    nouns.put(noun, new Bag<>());
+                nouns.get(noun).add(id);
+            }
         }
-        Digraph G = new Digraph(maxId + 1);
+
+        HashMap<Integer, Bag<Integer>> out = new HashMap<>();
+        HashSet<Integer> in = new HashSet<>();
+
         In hypernymsIn = new In(hypernyms);
         while (hypernymsIn.hasNextLine()) {
             String[] line = hypernymsIn.readLine().split(",");
             int from = Integer.parseInt(line[0]);
+            out.put(from, new Bag<>());
+            Bag<Integer> cur = out.get(from);
             for (int i = 1; i < line.length; ++i) {
                 int to = Integer.parseInt(line[i]);
-                G.addEdge(from, to);
+                cur.add(to);
+                in.add(to);
             }
         }
+
+        int root = 0;
+        for (int i : in)
+            if (!out.containsKey(i))
+                ++root;
+        if (root != 0)
+            throw new IllegalArgumentException("The hypernyms are not rooted");
+
+        Digraph G = new Digraph(out.size() + 1);
+        for (int from : out.keySet())
+            for (int to : out.get(from))
+                G.addEdge(from, to);
+
+        if (new DirectedCycle(G).hasCycle())
+            throw new IllegalArgumentException("The hypernyms contain cycle(s)");
+
         sap = new SAP(G);
     }
 
@@ -86,7 +113,8 @@ public class WordNet {
             int distance = wn.distance(nounA, nounB);
             String sap = wn.sap(nounA, nounB);
             StdOut.println(
-                    "A: " + nounA + "\tB: " + nounB + "\tDistance: " + distance + "\tSAP: " + sap);
+                    "A: " + nounA + "\tB: " + nounB + "\tDistance: " + distance + "\tSAP: "
+                            + sap);
         }
     }
 }

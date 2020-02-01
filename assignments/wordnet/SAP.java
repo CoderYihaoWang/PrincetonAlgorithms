@@ -1,20 +1,21 @@
 /* *****************************************************************************
- *  Name:
- *  Date:
- *  Description:
+ *  Name: SAP.java
+ *  Date: 1/2/2020
+ *  Description: computes the length of shortest ancestor path, and the ancestor thereof
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
+
+import java.util.HashSet;
 
 public class SAP {
 
     private static final int INFINITY = Integer.MAX_VALUE;
-    private static final int CACHESIZE = 10;
+    private static final int CACHESIZE = 1 << 3;
 
     private final Digraph G;
     private final int[] vDistTo;
@@ -72,15 +73,19 @@ public class SAP {
     private void bfs(int v, int w) {
         validateVertex(v);
         validateVertex(w);
-
+        if (v == w) {
+            length = 0;
+            ancestor = v;
+            return;
+        }
         if (checkCache(v, w))
             return;
 
         Queue<Integer> qv = new Queue<>();
         Queue<Integer> qw = new Queue<>();
-        SET<Integer> vMarked = new SET<>();
-        SET<Integer> wMarked = new SET<>();
-        length = -1;
+        HashSet<Integer> vMarked = new HashSet<>();
+        HashSet<Integer> wMarked = new HashSet<>();
+        length = INFINITY;
         ancestor = -1;
 
         qv.enqueue(v);
@@ -90,41 +95,56 @@ public class SAP {
         wMarked.add(w);
         wDistTo[w] = 0;
 
-        OUTER:
-        while (!qv.isEmpty() || !qw.isEmpty()) {
-            if (!qv.isEmpty()) {
+        boolean testV = true;
+        boolean testW = true;
+
+        while ((!qv.isEmpty() && testV) || (!qw.isEmpty() && testW)) {
+            if (!qv.isEmpty() && testV) {
                 int cv = qv.dequeue();
                 for (int dad : G.adj(cv)) {
-                    if (!vMarked.contains(dad)) {
-                        vMarked.add(dad);
-                        vDistTo[dad] = vDistTo[cv] + 1;
-                        if (wMarked.contains(dad)) {
-                            length = wDistTo[dad] + vDistTo[dad];
-                            ancestor = dad;
-                            setCache(v, w, length, ancestor);
-                            break OUTER;
-                        }
-                        qv.enqueue(dad);
+                    if (vMarked.contains(dad))
+                        continue;
+                    vMarked.add(dad);
+                    vDistTo[dad] = vDistTo[cv] + 1;
+                    if (vDistTo[dad] > length) {
+                        testV = false;
+                        break;
                     }
+                    if (wMarked.contains(dad)) {
+                        int len = wDistTo[dad] + vDistTo[dad];
+                        if (len < length) {
+                            length = len;
+                            ancestor = dad;
+                        }
+                    }
+                    qv.enqueue(dad);
                 }
             }
-            if (!qw.isEmpty()) {
+            if (!qw.isEmpty() && testW) {
                 int cw = qw.dequeue();
                 for (int dad : G.adj(cw)) {
-                    if (!wMarked.contains(dad)) {
-                        wMarked.add(dad);
-                        wDistTo[dad] = wDistTo[cw] + 1;
-                        if (vMarked.contains(dad)) {
-                            length = vDistTo[dad] + wDistTo[dad];
-                            ancestor = dad;
-                            setCache(v, w, length, ancestor);
-                            break OUTER;
-                        }
-                        qw.enqueue(dad);
+                    if (wMarked.contains(dad))
+                        continue;
+                    wMarked.add(dad);
+                    wDistTo[dad] = wDistTo[cw] + 1;
+                    if (wDistTo[dad] > length) {
+                        testW = false;
+                        break;
                     }
+                    if (vMarked.contains(dad)) {
+                        int len = wDistTo[dad] + vDistTo[dad];
+                        if (len < length) {
+                            length = len;
+                            ancestor = dad;
+                        }
+                    }
+                    qw.enqueue(dad);
                 }
             }
         }
+        if (length == INFINITY)
+            length = -1;
+        setCache(v, w, length, ancestor);
         for (int i : vMarked)
             vDistTo[i] = INFINITY;
         for (int i : wMarked)
@@ -134,9 +154,9 @@ public class SAP {
     private void bfs(Iterable<Integer> v, Iterable<Integer> w) {
         Queue<Integer> qv = new Queue<>();
         Queue<Integer> qw = new Queue<>();
-        SET<Integer> vMarked = new SET<>();
-        SET<Integer> wMarked = new SET<>();
-        length = -1;
+        HashSet<Integer> vMarked = new HashSet<>();
+        HashSet<Integer> wMarked = new HashSet<>();
+        length = INFINITY;
         ancestor = -1;
 
         for (Integer x : v) {
@@ -151,40 +171,65 @@ public class SAP {
             if (x == null)
                 throw new IllegalArgumentException("The Iterable cannot contain null element");
             validateVertex(x);
+            if (vMarked.contains(x)) {
+                length = 0;
+                ancestor = x;
+                return;
+            }
             qw.enqueue(x);
             wMarked.add(x);
             wDistTo[x] = 0;
         }
 
-        OUTER:
-        while (!qv.isEmpty() || !qw.isEmpty()) {
-            int cv = qv.dequeue();
-            for (int dad : G.adj(cv)) {
-                if (!vMarked.contains(dad)) {
+        boolean testV = true;
+        boolean testW = true;
+
+        while ((!qv.isEmpty() && testV) || (!qw.isEmpty() && testW)) {
+            if (!qv.isEmpty()) {
+                int cv = qv.dequeue();
+                for (int dad : G.adj(cv)) {
+                    if (vMarked.contains(dad))
+                        continue;
                     vMarked.add(dad);
                     vDistTo[dad] = vDistTo[cv] + 1;
+                    if (vDistTo[dad] > length) {
+                        testV = false;
+                        break;
+                    }
                     if (wMarked.contains(dad)) {
-                        length = wDistTo[dad] + vDistTo[dad];
-                        ancestor = dad;
-                        break OUTER;
+                        int len = wDistTo[dad] + vDistTo[dad];
+                        if (len < length) {
+                            length = len;
+                            ancestor = dad;
+                        }
                     }
                     qv.enqueue(dad);
                 }
             }
-            int cw = qw.dequeue();
-            for (int dad : G.adj(cw)) {
-                if (!wMarked.contains(dad)) {
+            if (!qw.isEmpty()) {
+                int cw = qw.dequeue();
+                for (int dad : G.adj(cw)) {
+                    if (wMarked.contains(dad))
+                        continue;
                     wMarked.add(dad);
                     wDistTo[dad] = wDistTo[cw] + 1;
+                    if (wDistTo[dad] > length) {
+                        testW = false;
+                        break;
+                    }
                     if (vMarked.contains(dad)) {
-                        length = vDistTo[dad] + wDistTo[dad];
-                        ancestor = dad;
-                        break OUTER;
+                        int len = wDistTo[dad] + vDistTo[dad];
+                        if (len < length) {
+                            length = len;
+                            ancestor = dad;
+                        }
                     }
                     qw.enqueue(dad);
                 }
             }
         }
+        if (length == INFINITY)
+            length = -1;
         for (int i : vMarked)
             vDistTo[i] = INFINITY;
         for (int i : wMarked)
@@ -233,5 +278,3 @@ public class SAP {
         }
     }
 }
-
-
