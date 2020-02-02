@@ -58,6 +58,12 @@
       <option name="PROGRAM_PARAMETERS" value="7x10.png" />
       <method v="2" />
     </configuration>
+    <configuration name="PrintSeams" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="PrintSeams" />
+      <module name="Algorithms, Part II" />
+      <option name="PROGRAM_PARAMETERS" value="stripes.png" />
+      <method v="2" />
+    </configuration>
     <configuration name="ShowEnergy" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="ShowEnergy" />
       <module name="Algorithms, Part II" />
@@ -67,7 +73,7 @@
     <configuration name="ShowSeams" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="ShowSeams" />
       <module name="Algorithms, Part II" />
-      <option name="PROGRAM_PARAMETERS" value="10x10.png" />
+      <option name="PROGRAM_PARAMETERS" value="HJocean.png" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">

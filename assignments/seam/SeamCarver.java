@@ -9,7 +9,6 @@
 
 import edu.princeton.cs.algs4.Picture;
 import edu.princeton.cs.algs4.Stack;
-import edu.princeton.cs.algs4.StdOut;
 
 public class SeamCarver {
 
@@ -25,8 +24,8 @@ public class SeamCarver {
         height = picture.height();
         width = picture.width();
         energy = new double[height][width];
-        for (int i = 1; i < height - 1; ++i)
-            for (int j = 1; j < width - 1; ++j)
+        for (int i = 0; i < height; ++i)
+            for (int j = 0; j < width; ++j)
                 energy[i][j] = computeEnergy(i, j);
     }
 
@@ -137,12 +136,6 @@ public class SeamCarver {
                 minId = i;
             }
         }
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                StdOut.printf("%.2f ", distTo[i][j]);
-            }
-            StdOut.println();
-        }
 
         int[] ans = new int[height];
         Stack<Integer> stack = new Stack<>();
@@ -169,6 +162,8 @@ public class SeamCarver {
         if (transposed)
             transpose();
         transposed = false;
+
+
     }
 
     private void transpose() {
