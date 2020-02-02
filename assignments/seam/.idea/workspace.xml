@@ -51,7 +51,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.ShowSeams">
+  <component name="RunManager" selected="Application.SeamCarver">
     <configuration name="PrintEnergy" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="PrintEnergy" />
       <module name="Algorithms, Part II" />
@@ -61,7 +61,19 @@
     <configuration name="PrintSeams" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="PrintSeams" />
       <module name="Algorithms, Part II" />
-      <option name="PROGRAM_PARAMETERS" value="stripes.png" />
+      <option name="PROGRAM_PARAMETERS" value="6x5.png" />
+      <method v="2" />
+    </configuration>
+    <configuration name="ResizeDemo" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="ResizeDemo" />
+      <module name="Algorithms, Part II" />
+      <option name="PROGRAM_PARAMETERS" value="chameleon.png 100 100" />
+      <method v="2" />
+    </configuration>
+    <configuration name="SeamCarver" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="SeamCarver" />
+      <module name="Algorithms, Part II" />
+      <option name="PROGRAM_PARAMETERS" value="chameleon.png 100 30" />
       <method v="2" />
     </configuration>
     <configuration name="ShowEnergy" type="Application" factoryName="Application">
