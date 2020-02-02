@@ -51,7 +51,12 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.KdTree">
+  <component name="RunManager" selected="Application.BinarySearchST">
+    <configuration name="BinarySearchST" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="BinarySearchST" />
+      <module name="Algorithms, Part I" />
+      <method v="2" />
+    </configuration>
     <configuration name="KdTree" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="KdTree" />
       <module name="Algorithms, Part I" />
