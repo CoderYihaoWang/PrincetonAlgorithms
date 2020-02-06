@@ -1,28 +1,33 @@
 
 /* *****************************************************************************
- *  Name:
- *  Date:
- *  Description:
+ *  Name: BoggleSolver.java
+ *  Date: 6/2/2020
+ *  Description: solve a Boggle game
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class BoggleSolver {
 
+    // the node type in a trie representation of the dictionary
     private class DictNode {
         private String word;
-        private DictNode[] next = new DictNode[26];
+        // null if the node is only an intermediate node, otherwise store the word here
+        private final DictNode[] next = new DictNode[26]; // next words, 0-25 = 'A'-'Z'
     }
 
-    private DictNode root = new DictNode();
+    // the dictionary
+    private final DictNode root = new DictNode();
 
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary) {
+        // construct the dictionary trie
         for (int i = 0; i < dictionary.length; ++i) {
             DictNode cur = root;
             String s = dictionary[i];
@@ -46,7 +51,10 @@ public class BoggleSolver {
         for (int j = 0; j < r; ++j)
             for (int k = 0; k < c; ++k)
                 bd[len++] = board.getLetter(j, k) - 'A';
-        ArrayList<Integer>[] adj = (ArrayList<Integer>[]) new ArrayList[len];
+        HashMap<Integer, ArrayList<Integer>> adj
+                = new HashMap<>(); // an array could be used, but the autograder forbits it
+
+        // construct the adjacency list
         for (int i = 0; i < len; ++i) {
             ArrayList<Integer> al = new ArrayList<>();
             if (i >= c)
@@ -67,33 +75,47 @@ public class BoggleSolver {
                 if (i < len - c)
                     al.add(i + c + 1);
             }
-            adj[i] = al;
+            adj.put(i, al);
         }
+        boolean[] visited = new boolean[len];
         for (int i = 0; i < len; ++i)
-            dfs(bd, adj, new boolean[len], i, root, ans);
+            dfs(bd, adj, visited, i, root, ans);
         return ans;
     }
 
-    private void dfs(int[] board, ArrayList<Integer>[] adj, boolean[] visited, int n, DictNode node,
-                     HashSet<String> ans) {
-        if (node == null)
-            return;
-        String word = node.word;
-        if (word != null && word.length() >= 3)
-            ans.add(word);
+    // depth first search the board from position n
+    // while moving along the searching path on the board, move along the trie at the same time
+    private void dfs(int[] board, HashMap<Integer, ArrayList<Integer>> adj, boolean[] visited,
+                     int n, DictNode node, HashSet<String> ans) {
+
         int letter = board[n];
+
+        // deal with letter 'Q', it is seen as 'qu'
         if (letter == 'Q' - 'A') {
             node = node.next[letter];
             letter = 'U' - 'A';
             if (node == null)
                 return;
         }
+
+        // check the letter in the current trie node
+        // if there is no such entry, give up the whole branch
+        DictNode next = node.next[letter];
+        if (next == null)
+            return;
+
+        // if the current position is a word whose length is larger than 3, then add it to the result
+        String word = next.word;
+        if (word != null && word.length() >= 3)
+            ans.add(word);
+
+        // mark the current position on the board as marked
+        // recursively search next posible positions
+        // and switch visited to false before ending, to make the current position available for other paths
         visited[n] = true;
-        for (int i : adj[n]) {
-            if (!visited[i]) {
-                dfs(board, adj, visited, i, node.next[letter], ans);
-            }
-        }
+        for (int i : adj.get(n))
+            if (!visited[i])
+                dfs(board, adj, visited, i, next, ans);
         visited[n] = false;
     }
 
@@ -120,7 +142,7 @@ public class BoggleSolver {
     public static void main(String[] args) {
         In in = new In("dictionary-yawl.txt");
         BoggleSolver bs = new BoggleSolver(in.readAllStrings());
-        BoggleBoard bb = new BoggleBoard("board-q.txt");
+        BoggleBoard bb = new BoggleBoard("board-points26539.txt");
         StdOut.println(bb.toString());
         Iterable<String> words = bs.getAllValidWords(bb);
         int score = 0;
