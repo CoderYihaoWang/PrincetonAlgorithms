@@ -7,8 +7,6 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
-import java.util.Arrays;
-
 public class BurrowsWheeler {
     private static final int ASCII_LEN = 256;
 
@@ -35,20 +33,22 @@ public class BurrowsWheeler {
         int first = BinaryStdIn.readInt();
         String t = BinaryStdIn.readString();
         int len = t.length();
-        char[] s = t.toCharArray();
-        Arrays.sort(s);
         int[] next = new int[len];
-        int[] radix = new int[ASCII_LEN];
+        int[] s = new int[len];
+        int[] radix = new int[ASCII_LEN + 1];
         for (int i = 0; i < len; ++i)
-            if (s[i] < ASCII_LEN)
-                radix[s[i] + 1] += 1;
+            radix[t.charAt(i) + 1] += 1;
         for (int i = 1; i < radix.length; ++i)
             radix[i] += radix[i - 1];
-        for (int i = 0; i < len; ++i)
-            next[radix[t.charAt(i)]++] = i;
+        for (int i = 0; i < len; ++i) {
+            int c = radix[t.charAt(i)];
+            next[c] = i;
+            s[c] = t.charAt(i);
+            ++radix[t.charAt(i)];
+        }
         int n = 0;
         for (int i = first; n < len; i = next[i], ++n)
-            BinaryStdOut.write(s[i]);
+            BinaryStdOut.write((char) s[i]);
         BinaryStdOut.flush();
     }
 
