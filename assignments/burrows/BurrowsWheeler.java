@@ -10,6 +10,7 @@ import edu.princeton.cs.algs4.BinaryStdOut;
 import java.util.Arrays;
 
 public class BurrowsWheeler {
+    private static final int ASCII_LEN = 256;
 
     // apply Burrows-Wheeler transform,
     // reading from standard input and writing to standard output
@@ -37,9 +38,10 @@ public class BurrowsWheeler {
         char[] s = t.toCharArray();
         Arrays.sort(s);
         int[] next = new int[len];
-        int[] radix = new int[256];
+        int[] radix = new int[ASCII_LEN];
         for (int i = 0; i < len; ++i)
-            radix[s[i] + 1] += 1;
+            if (s[i] < ASCII_LEN)
+                radix[s[i] + 1] += 1;
         for (int i = 1; i < radix.length; ++i)
             radix[i] += radix[i - 1];
         for (int i = 0; i < len; ++i)
